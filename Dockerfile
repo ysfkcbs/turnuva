@@ -5,10 +5,6 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-# Render $PORT verir, gunicorn o portta dinlemeli
-CMD ["sh", "./render_start.sh"]
+COPY render_start.sh /app/render_start.sh
+RUN chmod +x /app/render_start.sh
+CMD ["sh", "/app/render_start.sh"]

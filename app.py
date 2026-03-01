@@ -503,58 +503,7 @@ def create_app():
     from flask_migrate import Migrate
     migrate = Migrate(app, db)
 
-    def run_prod_bootstrap():
-    # Sadece Render/Prod’da çalışsın
-        if not os.getenv("DATABASE_URL"):
-            return
-        if os.getenv("RUN_BOOTSTRAP", "1") != "1":
-            return
-
-        try:
-            from flask_migrate import upgrade
-            upgrade()
-            print("[bootstrap] db upgrade OK")
-        except Exception as e:
-            print(f"[bootstrap] db upgrade failed: {e}")
-
-        try:
-            from seed import run_seed
-            run_seed()
-            print("[bootstrap] seed OK")
-        except Exception as e:
-            print(f"[bootstrap] seed failed: {e}")
-
-    # Route'ları burada kaydet
-    register_routes(app)
-
-    def run_prod_bootstrap(app):
-        """Prod ortamda (Render) migration + seed çalıştırır."""
-        # sadece DATABASE_URL varsa (yani Postgres/prod) çalışsın
-        if not os.getenv("DATABASE_URL"):
-            return
-        # Render gibi prod ortamı işaretlemek için istersen RENDER env varını kullanırız
-        # ama şimdilik DB varsa prod sayıyoruz.
-
-        try:
-            from flask_migrate import upgrade
-            upgrade()  # flask db upgrade eşdeğeri
-        except Exception as e:
-            print(f"[bootstrap] migrate upgrade skipped/failed: {e}")
-
-        try:
-            # seed.py bir dosya, içinde main() yoksa import edip fonksiyon çağırmak zor olabilir.
-            # En garantisi: seed.py içinde run() fonksiyonu oluşturmak.
-            import seed
-            if hasattr(seed, "run"):
-                seed.run()
-            else:
-                # seed.py doğrudan çalışacak şekilde yazıldıysa:
-                if hasattr(seed, "main"):
-                    seed.main()
-                else:
-                    print("[bootstrap] seed.py: run/main not found, skip")
-        except Exception as e:
-            print(f"[bootstrap] seed skipped/failed: {e}")
+   
 
     def run_sqlite_only_tasks():
         """SQLite'a özel tablo/kolon seed/migration işleri.
