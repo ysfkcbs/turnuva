@@ -1,6 +1,14 @@
 FROM python:3.11-slim
+
 WORKDIR /app
-COPY requirements.txt /app/requirements.txt
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . /app
-EXPOSE 5000
+
+COPY . .
+
+# Render $PORT verir, gunicorn o portta dinlemeli
+CMD ["sh", "-c", "gunicorn -w 2 -b 0.0.0.0:${PORT:-5000} 'app:create_app()'"]
