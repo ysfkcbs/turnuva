@@ -1,6 +1,6 @@
 
 import os, random, json
-import pandas as pd
+
 from io import BytesIO
 from datetime import datetime, timedelta
 
@@ -952,6 +952,7 @@ def create_app():
     @app.route("/tournaments/<int:tournament_id>/export_excel")
     @login_required
     def export_excel(tournament_id):
+        import pandas as pd
         t = Tournament.query.get_or_404(tournament_id)
         data = load_payload(t)
 
