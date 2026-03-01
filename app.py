@@ -572,7 +572,7 @@ def create_app():
     # SQLite işleri sadece sqlite'da çalışsın
     with app.app_context():
         run_sqlite_only_tasks()
-        run_prod_bootstrap(app)
+    #    run_prod_bootstrap(app)
     
 
     # ✅ return her zaman create_app'in en sonunda olmalı
