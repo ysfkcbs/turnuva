@@ -1,18 +1,15 @@
 import os
-from app import create_app
 from models import db, Branch, StudentProfile, User
 
 def upsert_branch(name: str, rules_json: str = "{}"):
     b = Branch.query.filter_by(name=name).first()
     if not b:
-        b = Branch(name=name, rules_json=rules_json, is_active=True)
-        db.session.add(b)
+        db.session.add(Branch(name=name, rules_json=rules_json, is_active=True))
 
 def upsert_profile(name: str, school_type: str):
     p = StudentProfile.query.filter_by(name=name, school_type=school_type).first()
     if not p:
-        p = StudentProfile(name=name, school_type=school_type, is_active=True)
-        db.session.add(p)
+        db.session.add(StudentProfile(name=name, school_type=school_type, is_active=True))
 
 def upsert_admin(username: str, password: str):
     u = User.query.filter_by(username=username).first()
@@ -21,26 +18,28 @@ def upsert_admin(username: str, password: str):
         u.set_password(password)
         db.session.add(u)
 
-def main():
-    app = create_app()
-    with app.app_context():
-        # Branch örnekleri (senin gerçek branch listeni buraya koyarız)
-        upsert_branch("Futbol")
-        upsert_branch("Basketbol")
-        upsert_branch("Voleybol")
+def run_seed():
+    # Branch’ler
+    upsert_branch("Futbol")
+    upsert_branch("Basketbol")
+    upsert_branch("Voleybol")
 
-        # StudentProfile örnekleri (senin gerçek profil listeni buraya koyarız)
-        upsert_profile("Standart", "İlkokul")
-        upsert_profile("Standart", "Ortaokul")
-        upsert_profile("Standart", "Lise")
+    # Profiller
+    upsert_profile("Standart", "İlkokul")
+    upsert_profile("Standart", "Ortaokul")
+    upsert_profile("Standart", "Lise")
 
-        # Admin kullanıcı (env’den alalım)
-        admin_user = os.getenv("ADMIN_USERNAME", "admin")
-        admin_pass = os.getenv("ADMIN_PASSWORD", "admin123")
-        upsert_admin(admin_user, admin_pass)
+    # Admin
+    admin_user = os.getenv("ADMIN_USERNAME", "dev.yusuf")
+    admin_pass = os.getenv("ADMIN_PASSWORD", "Kocabas.01")
+    upsert_admin(admin_user, admin_pass)
 
-        db.session.commit()
-        print("[seed] OK")
+    db.session.commit()
+    print("[seed] OK")
 
 if __name__ == "__main__":
-    main()
+    # Lokal çalıştırmak istersen:
+    from app import create_app
+    app = create_app()
+    with app.app_context():
+        run_seed()
