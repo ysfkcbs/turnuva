@@ -1211,7 +1211,7 @@ def create_app():
 
     with app.app_context():
         run_sqlite_only_tasks()
-        run_prod_bootstrap()
+        run_prod_bootstrap(app)
 
     return app
 
