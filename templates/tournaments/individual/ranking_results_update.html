@@ -1,0 +1,11 @@
+
+{% extends "base.html" %}
+{% block title %}Bireysel Sonuç Girişi{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Bireysel Sonuç Girişi (Sıralama)</h1>
+<div class="alert alert-info">
+  Bu ekran Task-6.5 bireysel branş MVP ile doldurulacak.
+</div>
+<a href="{{ url_for('tournaments_detail', tournament_id=t.id) }}" class="btn btn-outline-secondary">Turnuva Detayı</a>
+<a href="{{ url_for('index') }}" class="btn btn-outline-dark">Anasayfa</a>
+{% endblock %}

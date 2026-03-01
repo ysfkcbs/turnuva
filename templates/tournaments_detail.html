@@ -1,0 +1,25 @@
+{# Router template: selects correct detail page based on branch rules & mode #}
+{% set rules = data.branch_rules if data.branch_rules is defined else {} %}
+{% set participant_type = rules.get("participant_type","team") %}
+{% set mode = data.mode or data.get("mode","lig") %}
+
+{% if participant_type == "individual" %}
+  {% if mode == "lig" %}
+    {# individual league types: head_to_head (default) or ranking #}
+    {% if rules.get("league_type","head_to_head") == "ranking" %}
+      {% set tpl = "tournaments/individual/ranking_detail.html" %}
+    {% else %}
+      {% set tpl = "tournaments/individual/head_to_head_league_detail.html" %}
+    {% endif %}
+  {% else %}
+    {% set tpl = "tournaments/individual/elimination_detail.html" %}
+  {% endif %}
+{% else %}
+  {% if mode == "lig" %}
+    {% set tpl = "tournaments/team/league_detail.html" %}
+  {% else %}
+    {% set tpl = "tournaments/team/elimination_detail.html" %}
+  {% endif %}
+{% endif %}
+
+{% extends tpl %}

@@ -1,0 +1,67 @@
+
+{% extends "base.html" %}
+{% block title %}Eleme Sonuçları Güncelle{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Eleme Sonuçları – {{ round_no }}. Tur</h1>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('tournaments_detail', tournament_id=t.id) }}" class="btn btn-outline-secondary btn-sm">Turnuva Detayı</a>
+    <a href="{{ url_for('index') }}" class="btn btn-outline-dark btn-sm">Anasayfa</a>
+  </div>
+</div>
+
+<form method="post">
+  {% if matches and matches|length > 0 %}
+    <div class="row g-3">
+      {% for m in matches %}
+      {% set idx = loop.index0 %}
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <strong>Maç {{ loop.index }}</strong>
+            <div class="text-end">
+              {% if m.dt %}<span class="badge bg-secondary me-1">{{ m.dt }}</span>{% endif %}
+              {% if m.loc %}<span class="badge bg-info">{{ m.loc }}</span>{% endif %}
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="me-2">
+                <div class="fw-bold">{{ m.home.okul }}</div>
+                <div class="text-muted small">{{ m.home.okul_turu }}</div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="number" min="0" name="gh_{{ idx }}" value="{{ m.gh if m.gh is not none }}" class="form-control form-control-sm" style="max-width:64px;">
+                <span class="fw-bold">-</span>
+                <input type="number" min="0" name="ga_{{ idx }}" value="{{ m.ga if m.ga is not none }}" class="form-control form-control-sm" style="max-width:64px;">
+              </div>
+              <div class="ms-2 text-end">
+                <div class="fw-bold">{{ m.away.okul }}</div>
+                <div class="text-muted small">{{ m.away.okul_turu }}</div>
+              </div>
+            </div>
+
+            {% if m.gh is not none and m.ga is not none %}
+              {% if m.gh > m.ga %}
+                <div class="alert alert-success py-1 px-2 mb-0"><small>Kazanan: {{ m.home.okul }}</small></div>
+              {% elif m.ga > m.gh %}
+                <div class="alert alert-success py-1 px-2 mb-0"><small>Kazanan: {{ m.away.okul }}</small></div>
+              {% else %}
+                <div class="alert alert-warning py-1 px-2 mb-0"><small>Berabere</small></div>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-primary">Kaydet</button>
+    </div>
+  {% else %}
+    <div class="alert alert-info">Bu tur için maç bulunamadı.</div>
+  {% endif %}
+</form>
+{% endblock %}

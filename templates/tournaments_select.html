@@ -1,0 +1,115 @@
+
+{% extends "base.html" %}
+{% block title %}Okul Seçimi{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Okul Seçimi</h1>
+  <a href="{{ url_for('index') }}" class="btn btn-outline-dark btn-sm">Anasayfa</a>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div><strong>Fikstür Türü:</strong> {{ tournament_type|capitalize }}</div>
+        <div><strong>Branş:</strong> {{ branch.name if branch else "-" }}</div>
+        <div><strong>Okul Türü:</strong> {{ school_type }}</div>
+      </div>
+      <div class="col-md-4">
+        <div><strong>Başlangıç Tarihi:</strong> {{ start_date }}</div>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('tournaments_new') }}">Geri</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ✅ BURASI DÜZELDİ: POST tournaments_select'e gidecek #}
+<form method="post" action="{{ url_for('tournaments_select') }}">
+  <div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <div class="form-check m-0">
+          <input class="form-check-input" type="checkbox" id="checkAll">
+          <label class="form-check-label" for="checkAll">Hepsini Seç</label>
+        </div>
+        <div class="input-group input-group-sm" style="max-width: 280px;">
+          <span class="input-group-text">Filtre</span>
+          <input type="text" id="filterInput" class="form-control" placeholder="Okul adıyla ara...">
+        </div>
+      </div>
+      <small class="text-muted">
+        Toplam <strong id="totalCount">{{ schools|length }}</strong> okul · Seçili <strong id="selectedCount">0</strong>
+      </small>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0" id="schoolsTable">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 44px;"></th>
+              <th>Okul Adı</th>
+              <th>İlçe</th>
+              <th>Tür</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in schools %}
+            <tr>
+              <td>
+                {# name="school_ids" kalsın, app.py bunu kabul ediyor #}
+                <input class="form-check-input row-check" type="checkbox" name="school_ids" value="{{ s.id }}">
+              </td>
+              <td class="school-name">{{ s.kurum_ad }}</td>
+              <td>{{ s.ilce_ad }}</td>
+              <td>{{ s.okul_turu }}</td>
+            </tr>
+            {% endfor %}
+            {% if schools|length == 0 %}
+            <tr><td colspan="4" class="text-center text-muted p-3">Seçilen türde okul bulunamadı.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <small class="text-muted">En az 2 okul seçmelisiniz.</small>
+      <div>
+        <button type="submit" class="btn btn-primary">Turnuva Oluştur</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+// Hepsini seç / bırak
+const checkAll = document.getElementById('checkAll');
+const checks = () => Array.from(document.querySelectorAll('.row-check'));
+const selectedCount = document.getElementById('selectedCount');
+
+function updateSelectedCount() {
+  const cnt = checks().filter(ch => ch.checked && ch.offsetParent !== null).length;
+  selectedCount.textContent = cnt;
+}
+checkAll?.addEventListener('change', (e) => {
+  checks().forEach(ch => { if (ch.offsetParent !== null) ch.checked = e.target.checked; });
+  updateSelectedCount();
+});
+checks().forEach(ch => ch.addEventListener('change', updateSelectedCount));
+
+// Filtreleme
+const filterInput = document.getElementById('filterInput');
+filterInput?.addEventListener('input', () => {
+  const q = filterInput.value.trim().toLowerCase();
+  document.querySelectorAll('#schoolsTable tbody tr').forEach(tr => {
+    const name = tr.querySelector('.school-name')?.textContent?.toLowerCase() || '';
+    tr.style.display = name.includes(q) ? '' : 'none';
+  });
+  updateSelectedCount();
+});
+</script>
+{% endblock %}

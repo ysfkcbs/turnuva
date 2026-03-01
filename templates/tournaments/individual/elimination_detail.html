@@ -1,0 +1,64 @@
+
+{% extends "base.html" %}
+{% block title %}Turnuva Detayı{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">{{ t.name }}</h1>
+
+{% if data.mode == 'lig' %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Okul</th><th>Okul Türü</th><th>Maç</th><th>Galibiyet</th><th>Mağlubiyet</th><th>Beraberlik</th><th>Puan</th><th>Averaj</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in data.table %}
+    <tr>
+      <td>{{ row.okul }}</td>
+      <td>{{ row.okul_turu }}</td>
+      <td>{{ row.mac }}</td>
+      <td>{{ row.galibiyet }}</td>
+      <td>{{ row.maglubiyet }}</td>
+      <td>{{ row.beraberlik }}</td>
+      <td>{{ row.puan }}</td>
+      <td>{{ row.averaj }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="row">
+  {% for rnd in data.rounds %}
+  <div class="col-md-4">
+    <div class="card mb-3">
+      <div class="card-header">{{ loop.index }}. Tur</div>
+      <div class="card-body">
+        {% for m in rnd %}
+          {% set gh = m.gh %}{% set ga = m.ga %}
+          {% set c1 = 'table-success' if gh is not none and ga is not none and gh > ga else ('table-warning' if gh is not none and ga is not none and gh == ga else '') %}
+          {% set c2 = 'table-success' if gh is not none and ga is not none and ga > gh else ('table-warning' if gh is not none and ga is not none and gh == ga else '') %}
+          <table class="table table-sm mb-3">
+            <tbody>
+              <tr class="{{ c1 }}">
+                <td><strong>{{ m.home.okul }}</strong> ({{ m.home.okul_turu }})</td>
+                <td class="text-end">{{ gh if gh is not none else '-' }}</td>
+              </tr>
+              <tr class="{{ c2 }}">
+                <td><strong>{{ m.away.okul }}</strong> ({{ m.away.okul_turu }})</td>
+                <td class="text-end">{{ ga if ga is not none else '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="mt-3 d-flex gap-2">
+  <a href="{{ url_for('tournament_export', tid=t.id) }}" class="btn btn-success">Excel Olarak İndir</a>
+  <a href="{{ url_for('results_update', tid=t.id) }}" class="btn btn-primary">Sonuç Gir</a>
+</div>
+{% endblock %}

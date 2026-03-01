@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Panel{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Panel</h1>
+<div class="row">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Okullar</h5>
+        <p class="card-text text-muted">Kartal'daki tüm okulları listeleyin.</p>
+        <a href="{{ url_for('okullar') }}" class="btn btn-primary">Okulları Listele</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

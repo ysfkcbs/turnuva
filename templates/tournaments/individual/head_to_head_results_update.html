@@ -1,0 +1,137 @@
+
+{% extends "base.html" %}
+{% block title %}Lig Sonuçları Güncelle{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Lig Sonuçları Güncelle</h1>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('tournaments_detail', tournament_id=t.id) }}" class="btn btn-outline-secondary btn-sm">Turnuva Detayı</a>
+    <a href="{{ url_for('index') }}" class="btn btn-outline-dark btn-sm">Anasayfa</a>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Maçlar -->
+  <div class="col-lg-8">
+    <form method="post">
+      {% for round_no, items in rounds %}
+      <div class="card mb-3">
+        <div class="card-header">
+          <strong>{{ round_no }}. Hafta</strong>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 40%;">Ev Sahibi</th>
+                <th style="width: 20%;" class="text-center">Skor</th>
+                <th style="width: 40%;">Deplasman</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% if items and items|length > 0 %}
+              {% for idx, m in items %}
+              <tr>
+                <!-- Ev sahibi -->
+                <td>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>{{ m.home.okul }}</strong>
+                      <small class="text-muted">({{ m.home.okul_turu }})</small>
+                    </div>
+                    <div class="text-end">
+                      {% if m.dt %}<span class="badge bg-secondary me-1">{{ m.dt }}</span>{% endif %}
+                      {% if m.loc %}<span class="badge bg-info">{{ m.loc }}</span>{% endif %}
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Skor -->
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center gap-1">
+                    <input type="number" min="0" name="gh_{{ idx }}" value="{{ m.gh if m.gh is not none }}" class="form-control form-control-sm" style="max-width:64px;">
+                    <span>-</span>
+                    <input type="number" min="0" name="ga_{{ idx }}" value="{{ m.ga if m.ga is not none }}" class="form-control form-control-sm" style="max-width:64px;">
+                  </div>
+                </td>
+
+                <!-- Deplasman -->
+                <td>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-end w-100">
+                      <strong>{{ m.away.okul }}</strong>
+                      <small class="text-muted">({{ m.away.okul_turu }})</small>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="3" class="text-center text-muted p-3">Bu hafta için maç bulunamadı.</td>
+              </tr>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary">Kaydet</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Puan Durumu -->
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <strong>Puan Durumu</strong>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Okul</th>
+              <th class="text-center">O</th>
+              <th class="text-center">G</th>
+              <th class="text-center">B</th>
+              <th class="text-center">M</th>
+              <th class="text-center">Av.</th>
+              <th class="text-center">P</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in table %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>{{ r.okul }}</strong>
+                    <small class="text-muted">({{ r.okul_turu }})</small>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">{{ r.mac }}</td>
+              <td class="text-center">{{ r.galibiyet }}</td>
+              <td class="text-center">{{ r.beraberlik }}</td>
+              <td class="text-center">{{ r.maglubiyet }}</td>
+              <td class="text-center">{{ r.averaj }}</td>
+              <td class="text-center"><strong>{{ r.puan }}</strong></td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="8" class="text-center text-muted p-3">Henüz veri yok.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

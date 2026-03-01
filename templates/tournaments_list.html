@@ -1,0 +1,61 @@
+
+{% extends "base.html" %}
+{% block title %}Turnuvalar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Turnuvalar</h1>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('tournaments_new') }}" class="btn btn-primary btn-sm">Yeni Turnuva</a>
+    <a href="{{ url_for('index') }}" class="btn btn-outline-dark btn-sm">Anasayfa</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-sm mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Ad</th>
+          <th>Tür</th>
+          <th>Okul Türü</th>
+          <th>Başlangıç</th>
+          <th>Durum</th>
+          <th class="text-end" style="width:280px;">İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for t in tournaments %}
+        <tr>
+          <td>{{ t.id }}</td>
+          <td>{{ t.name }}</td>
+          <td>{{ t.tournament_type|capitalize }}</td>
+          <td>{{ t.school_type }}</td>
+          <td>{{ t.start_date or "-" }}</td>
+          <td>
+            {% if t.is_active %}
+              <span class="badge bg-success">Aktif</span>
+            {% else %}
+              <span class="badge bg-secondary">Kapalı</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('tournaments_detail', tournament_id=t.id) }}">Detay</a>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('results_update', tournament_id=t.id) }}">Sonuç Gir</a>
+            <a class="btn btn-sm btn-outline-success" href="{{ url_for('export_excel', tournament_id=t.id) }}">Excel</a>
+            <a class="btn btn-sm btn-outline-dark" href="{{ url_for('tournaments_detail', tournament_id=t.id) }}">Takvim</a>
+            <form method="post" action="{{ url_for('tournaments_delete', tournament_id=t.id) }}" style="display:inline;"
+                  onsubmit="return confirm('Bu turnuvayı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.');">
+              <button class="btn btn-sm btn-danger">Sil</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="text-center text-muted p-3">Kayıtlı turnuva yok.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

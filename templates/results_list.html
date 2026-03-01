@@ -1,0 +1,21 @@
+
+{% extends "base.html" %}
+{% block title %}Sonuçlar Gir{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Aktif Turnuvalar</h1>
+<table class="table table-striped">
+  <thead>
+  <tr><th>Adı</th><th>Tür</th><th>Okul Türü</th><th>Güncelle</th></tr>
+  </thead>
+  <tbody>
+  {% for t in tournaments %}
+    <tr>
+      <td>{{ t.name }}</td>
+      <td>{{ t.tournament_type }}</td>
+      <td>{{ t.school_type }}</td>
+      <td><a href="{{ url_for('results_update', tournament_id=t.id) }}" class="btn btn-sm btn-primary">Güncelle</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

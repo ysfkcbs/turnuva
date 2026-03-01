@@ -1,0 +1,90 @@
+
+<!doctype html>
+
+<a href="{{ url_for('admin_create_user') }}" class="btn btn-outline-primary ms-2">Kullanıcı Ekle</a>
+
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <title>Yönetici Paneli</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4">Yönetici Paneli</h1>
+        <div>
+          <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('index') }}">Ana Sayfa</a>
+          <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}">Çıkış</a>
+        </div>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for cat, msg in messages %}
+            <div class="alert alert-{{ cat }} mb-3">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Fikstür Oluştur</h5>
+          <a href="{{ url_for('create_fixture') }}" class="btn btn-primary">Yeni Fikstür Oluştur</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Mevcut Fikstürler</h5>
+          {% if fixtures %}
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Turnuva Türü</th>
+                    <th>Yayın Durumu</th>
+                    <th>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for f in fixtures %}
+                    <tr>
+                      <td>{{ f.id }}</td>
+                      <td>{{ f.tournament_type_id }}</td>
+                      <td>
+                        {% if f.published %}
+                          <span class="badge bg-success">Yayınlandı</span>
+                        {% else %}
+                          <span class="badge bg-secondary">Taslak</span>
+                        {% endif %}
+                      </td>
+                      <td class="d-flex gap-2">
+                        <form method="post" action="{{ url_for('publish_fixture', fixture_id=f.id) }}">
+                          <button class="btn btn-sm btn-success" {% if f.published %}disabled{% endif %}>Yayınla</button>
+                        </form>
+                        <button class="btn btn-sm btn-outline-dark" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#fx{{ f.id }}">
+                          Görüntüle
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="collapse" id="fx{{ f.id }}">
+                      <td colspan="4">
+                        <pre class="mb-0" style="white-space: pre-wrap;">{{ f.fixture_data }}</pre>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">Henüz oluşturulmuş fikstür yok.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

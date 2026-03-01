@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Eleme Sonuçları Güncelle{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Eleme Sonuçları Güncelle</h1>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('tournaments_detail', tournament_id=t.id) }}" class="btn btn-outline-secondary btn-sm">
+      Turnuva Detayı
+    </a>
+    <a href="{{ url_for('index') }}" class="btn btn-outline-dark btn-sm">
+      Anasayfa
+    </a>
+  </div>
+</div>
+
+{% set rules = data.branch_rules if data.branch_rules is defined else {} %}
+{% set participant_type = rules.get("participant_type", "team") %}
+{% set is_individual = (participant_type == "individual") %}
+
+{% if not data.rounds or data.rounds|length == 0 %}
+  <div class="alert alert-info">
+    Bu turnuva için eleme tablosu bulunamadı.
+  </div>
+{% else %}
+  {% for rnd in data.rounds %}
+    {% set ridx = loop.index0 %}
+
+    <form method="post" class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Tur {{ loop.index }}</span>
+        <small class="text-muted">
+          Maç sayısı: {{ rnd|length }}
+        </small>
+      </div>
+      <input type="hidden" name="round_idx" value="{{ ridx }}">
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th style="width:60px;" class="text-center">#</th>
+                <th>Ev Sahibi</th>
+                <th style="width:120px;" class="text-center">Skor</th>
+                <th>Deplasman</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for match in rnd %}
+                {% set midx = loop.index0 %}
+                {% set home = match[0] %}
+                {% set away = match[1] if match|length > 1 else None %}
+                {% set res = (0, 0) %}
+                {% if data.results is defined and data.results|length > ridx
+                      and data.results[ridx]|length > midx %}
+                  {% set res = data.results[ridx][midx] %}
+                {% endif %}
+
+                <tr>
+                  <td class="text-center">
+                    {{ loop.index }}
+                  </td>
+                  <td>
+                    {% if home %}
+                      <strong>{{ home.name }}</strong>
+                      {% if is_individual and home.school_name is defined %}
+                        <div class="small text-muted">{{ home.school_name }}</div>
+                      {% endif %}
+                    {% else %}
+                      <span class="text-muted">-</span>
+                    {% endif %}
+                  </td>
+
+                  <td class="text-center">
+                    {% if away %}
+                      <div class="d-flex justify-content-center align-items-center gap-1">
+                        <input type="text"
+                               name="sa_{{ ridx }}_{{ midx }}"
+                               value="{{ res[0] }}"
+                               class="form-control form-control-sm text-center"
+                               style="max-width:60px;">
+                        <span>-</span>
+                        <input type="text"
+                               name="sb_{{ ridx }}_{{ midx }}"
+                               value="{{ res[1] }}"
+                               class="form-control form-control-sm text-center"
+                               style="max-width:60px;">
+                      </div>
+                    {% else %}
+                      <span class="badge bg-secondary">Bay geçer</span>
+                    {% endif %}
+                  </td>
+
+                  <td>
+                    {% if away %}
+                      <strong>{{ away.name }}</strong>
+                      {% if is_individual and away.school_name is defined %}
+                        <div class="small text-muted">{{ away.school_name }}</div>
+                      {% endif %}
+                    {% else %}
+                      <span class="text-muted">-</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card-footer d-flex justify-content-end gap-2">
+        <button type="submit" class="btn btn-primary">
+          Bu Turu Kaydet ve Devam Et
+        </button>
+      </div>
+    </form>
+  {% endfor %}
+{% endif %}
+{% endblock %}

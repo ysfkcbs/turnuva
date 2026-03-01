@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+{% block title %}Ana Sayfa{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Güncel Karşılaşmalar</h1>
+
+{% if elim_lists %}
+  {% for item in elim_lists %}
+    <div class="card mb-3">
+      <div class="card-header">
+        {{ item.t.name }} — {{ item.round }}. Tur
+      </div>
+      <div class="card-body">
+        {% for m in item.matches %}
+          <div class="row g-2 align-items-center mb-2">
+            <div class="col-md-5">
+              <strong>{{ m.home.okul }}</strong> ({{ m.home.okul_turu }})
+            </div>
+            <div class="col-md-2 text-center">vs</div>
+            <div class="col-md-5">
+              <strong>{{ m.away.okul }}</strong> ({{ m.away.okul_turu }})
+            </div>
+          </div>
+          <hr class="my-2">
+        {% endfor %}
+        <div class="text-end">
+          <a class="btn btn-sm btn-primary" href="{{ url_for('results_update', tournament_id=item.t.id) }}">Sonuç Gir</a>
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('tournaments_detail', tournament_id=item.t.id) }}">Detay</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-info">Aktif eleme turnuvalarında listelenecek maç bulunamadı.</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,55 @@
+
+{% extends "base.html" %}
+{% block title %}Yeni Turnuva{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Yeni Turnuva Oluştur</h1>
+
+<form method="post" class="card p-3" style="max-width:720px;">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Turnuva Adı</label>
+      <input type="text" class="form-control" name="name" required>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Öğrenci Profili</label>
+      <select class="form-select" name="profile_id" required>
+        <option value="">Profil seçiniz</option>
+        {% for p in profiles %}
+          <option value="{{ p.id }}">{{ p.school_type }} - {{ p.name }}</option>
+        {% endfor %}
+      </select>
+      <div class="form-text">Profil okul türünü otomatik belirler.</div>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Fikstür Türü</label>
+      <select class="form-select" name="tournament_type" required>
+        <option value="lig">Lig</option>
+        <option value="eleme">Eleme</option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Branş</label>
+      <select class="form-select" name="branch_id" required>
+        <option value="">Branş seçiniz</option>
+        {% for b in branches %}
+          <option value="{{ b.id }}">{{ b.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Başlangıç Tarihi</label>
+      <input type="date" class="form-control" name="start_date" required>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <button class="btn btn-primary">Devam Et</button>
+    <a href="{{ url_for('tournaments_list') }}" class="btn btn-outline-secondary">İptal</a>
+  </div>
+</form>
+{% endblock %}
