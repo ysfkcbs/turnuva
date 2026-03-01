@@ -500,6 +500,9 @@ def create_app():
 
     db.init_app(app)
 
+    from flask_migrate import Migrate
+    migrate = Migrate(app, db)
+
     def run_prod_bootstrap():
     # Sadece Render/Prod’da çalışsın
         if not os.getenv("DATABASE_URL"):
@@ -1211,7 +1214,7 @@ def create_app():
 
     with app.app_context():
         run_sqlite_only_tasks()
-        run_prod_bootstrap(app)
+    #    run_prod_bootstrap(app)
 
     return app
 
